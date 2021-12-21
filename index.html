@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Content <span id="id"></span></h1>
+    <label for="specID">Specify ID:</label>
+    <input type="text" id="specID" name="specID" minlength="1" maxlength="100">
+    <p></p>
+    <button id="prev" type="button" onclick="loadPrev()">Previous</button>
+    <button id="next" type="button" onclick="loadNext()">Next</button>
+    <p></p>
+    <img src="" id="img"></img>
+    <video id="video" controls autoplay></video>
+    <script>
+        let request = "https://gateway.pinata.cloud/ipfs/QmTePxv4CxpoJ3T3c29hbAMtU6o6EmmLXaUupnQff3tHTb/"
+        let id = 1;
+
+        let imgContainer = document.getElementById("img");
+        let videoContainer = document.getElementById("video");
+        let idContainer = document.getElementById("id");
+        let input = document.getElementById('specID');
+
+        let source = document.createElement('source');
+        videoContainer.appendChild(source);
+
+        LoadNewData();
+
+        input.addEventListener('change', updateValue);
+        function updateValue(e) {
+            id = e.target.value;
+            LoadNewData();
+        }
+
+        function loadNext(){
+            id ++;
+            if(id > 1000) id = 1
+
+            LoadNewData();
+        }
+
+        function loadPrev(){
+            id --;
+            if(id <= 0) id = 1000
+
+            LoadNewData();
+        }
+
+        function LoadNewData(){
+            LoadData(request+id)
+                .then(data => {
+                    console.log(data);
+
+                    idContainer.textContent = id;
+                    imgContainer.src = data.image;
+                    
+
+                    source.setAttribute('src', data.animation);
+                    source.setAttribute('type', 'video/mp4');
+
+                    videoContainer.load()
+                    videoContainer.play();
+                })
+                .catch(e => {
+                    console.error(e);
+                })
+        }
+        
+
+        async function LoadData(request){
+            const response = await fetch(request); //using await replace the .then(). It wait until the reponse is loaded to store it into the varibale
+            const data     = await response.json();
+            return data;
+        }
+    </script>
+</body>
+</html>
