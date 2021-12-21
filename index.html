@@ -11,6 +11,9 @@
     <label for="specID">Specify ID:</label>
     <input type="text" id="specID" name="specID" minlength="1" maxlength="100">
     <p></p>
+    img link: <a href="" id="imgurl" target="_blank"></a> <br>
+    video link: <a href="" id="videourl" target="_blank"></a>
+    <p></p>
     <button id="prev" type="button" onclick="loadPrev()">Previous</button>
     <button id="next" type="button" onclick="loadNext()">Next</button>
     <p></p>
@@ -22,6 +25,8 @@
 
         let imgContainer = document.getElementById("img");
         let videoContainer = document.getElementById("video");
+        let imgURL = document.getElementById("imgurl");
+        let videoURL = document.getElementById("videourl");
         let idContainer = document.getElementById("id");
         let input = document.getElementById('specID');
 
@@ -56,14 +61,18 @@
                     console.log(data);
 
                     idContainer.textContent = id;
-                    imgContainer.src = data.image;
+                    imgContainer.src        = data.image;
                     
-
                     source.setAttribute('src', data.animation);
                     source.setAttribute('type', 'video/mp4');
 
                     videoContainer.load()
                     videoContainer.play();
+
+                    imgURL.textContent   = data.image;
+                    imgURL.href          = data.image;
+                    videoURL.textContent = data.animation;
+                    videoURL.href        = data.animation;
                 })
                 .catch(e => {
                     console.error(e);
