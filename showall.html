@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Content <span id="id"></span></h1>
+    <button id="prev" type="button" onclick="loadPrev()">Previous</button>
+    <button id="next" type="button" onclick="loadNext()">Next</button>
+    <p></p>
+    <div id="content"></div>
+
+    <script>
+        let request = "https://bonjour-lab.mypinata.cloud/ipfs/QmRnh1KNYrGUhDnCa3JY3aZ42tLB1z68Fytf42N5K5Vgpx/"
+        let id = 1;
+        let batch = 10
+        let container = document.getElementById("content");
+        let containerid = document.getElementById("id");
+
+        LoadNewData();
+
+        function loadNext(){
+            id += batch;
+            if(id > 1000) id = 1
+            
+            container.innerHTML = ''
+            LoadNewData();
+        }
+
+        function loadPrev(){
+            id -= batch;
+            if(id <= 0) id = 1000
+            
+            container.innerHTML = ''
+            LoadNewData();
+        }
+
+        function LoadNewData(){
+            containerid.textContent = `NFT from ${id} to ${id+ batch -1}`;
+            for(let i=id; i< id + batch; i++){
+                LoadData(request + i)
+                    .then(data => {
+                        console.log(data);
+                        
+                        let header = document.createElement('h2')
+                        header.textContent = `NFT #${i}`;
+
+                        let imgc = document.createElement('img')
+                        imgc.setAttribute('src', data.image);
+
+                        let videoc = document.createElement('video')
+                        let source = document.createElement('source');
+                        source.setAttribute('src', data.animation);
+                        source.setAttribute('type', 'video/mp4');
+
+                        videoc.appendChild(source);
+                        videoc.controls = true;
+                        videoc.autoplay = false;
+                        // videoc.setAttribute('controls', '');
+                        // videoc.setAttribute('autoplay', '');
+                        videoc.load()
+                        videoc.play();
+                        
+                        container.appendChild(header);
+                        container.appendChild(imgc);
+                        container.appendChild(videoc);
+                    })
+                    .catch(e => {
+                        console.error(e);
+                    })
+            }
+        }
+        
+
+        async function LoadData(request){
+            const response = await fetch(request); //using await replace the .then(). It wait until the reponse is loaded to store it into the varibale
+            const data     = await response.json();
+            return data;
+        }
+    </script>
+</body>
+</html>
